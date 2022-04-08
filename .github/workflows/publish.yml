@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: 16
           cache: 'pnpm'
-          cache-dependency-path: ./packages/server/pnpm-lock.yaml
+          cache-dependency-path: ./pnpm-lock.yaml
       - run: pnpm i
       - run: pnpm test
 
@@ -39,7 +39,7 @@ jobs:
         with:
           node-version: 16
           cache: 'pnpm'
-          cache-dependency-path: ./packages/server/pnpm-lock.yaml
+          cache-dependency-path: ./pnpm-lock.yaml
           registry-url: https://registry.npmjs.org/
       - run: pnpm i
       - run: pnpm build
