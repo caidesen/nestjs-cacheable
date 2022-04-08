@@ -1,12 +1,12 @@
 {
-  "name": "nest-cacheable",
-  "version": "0.0.1",
+  "name": "nestjs-cacheable",
+  "version": "0.1.0",
   "description": "a simple service level cache module in NestJs",
   "author": "caidesen",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/caidesen/nest-cacheable"
+    "url": "https://github.com/caidesen/nestjs-cacheable"
   },
   "publishConfig": {
     "access": "public"
