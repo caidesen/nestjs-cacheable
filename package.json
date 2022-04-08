@@ -1,10 +1,22 @@
 {
   "name": "nest-cacheable",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
-  "private": true,
-  "license": "UNLICENSED",
+  "description": "a simple service level cache module in NestJs",
+  "author": "caidesen",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/caidesen/nest-cacheable"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "typings": "dist/index.d.ts",
+  "main": "dist/index.js",
+  "files": [
+    "LICENSE",
+    "dist"
+  ],
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "tsc -p tsconfig.build.json",
