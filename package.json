@@ -1,6 +1,6 @@
 {
   "name": "nestjs-cacheable",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "a simple service level cache module in NestJs",
   "author": "caidesen",
   "license": "MIT",
