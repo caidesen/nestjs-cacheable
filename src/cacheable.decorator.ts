@@ -25,7 +25,7 @@ export function Cacheable(options: CacheableRegisterOptions): MethodDecorator {
         };
         const cacheKey = generateComposedKey(composeOptions);
         return cacheableHandle(
-          cacheKey,
+          cacheKey[0],
           () => originalMethod.apply(this, args),
           options.ttl,
         );
@@ -35,7 +35,7 @@ export function Cacheable(options: CacheableRegisterOptions): MethodDecorator {
 }
 
 export function CacheEvict(
-  options: CacheEvictRegisterOptions,
+  ...options: CacheEvictRegisterOptions[]
 ): MethodDecorator {
   return (target, propertyKey, descriptor) => {
     // eslint-disable-next-line @typescript-eslint/ban-types
@@ -50,12 +50,20 @@ export function CacheEvict(
           throw e;
         } finally {
           try {
-            const cacheKey = generateComposedKey({
-              ...options,
-              methodName: propertyKey as string,
-              args,
-            });
-            await getCacheManager().del(cacheKey);
+            await Promise.all(
+              options.map((it) => {
+                const cacheKey = generateComposedKey({
+                  ...it,
+                  methodName: propertyKey as string,
+                  args,
+                });
+                if (Array.isArray(cacheKey))
+                  return Promise.all(
+                    cacheKey.map((it) => getCacheManager().del(it)),
+                  );
+                return getCacheManager().del(cacheKey);
+              }),
+            );
           } catch {}
         }
         return value;

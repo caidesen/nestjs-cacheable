@@ -1,6 +1,6 @@
 import { Cache } from 'cache-manager';
 import * as serialize from 'serialize-javascript';
-import { CacheKeyBuilder } from './cacheable.interface';
+import { CacheEvictKeyBuilder, CacheKeyBuilder } from './cacheable.interface';
 import { createHash } from 'crypto';
 
 let cacheManager: Cache | undefined;
@@ -10,38 +10,37 @@ export function setCacheManager(m: Cache) {
 export function getCacheManager() {
   return cacheManager;
 }
-
+type KeyType = string | string[] | CacheKeyBuilder | CacheEvictKeyBuilder;
 /**
  * try extract valid key from build function or fixed string
  */
-function extract(keyBuilder: CacheKeyBuilder | string, args: any[]) {
-  if (keyBuilder instanceof Function) {
-    return keyBuilder(...args);
-  }
-  return keyBuilder;
+function extract(keyBuilder: KeyType, args: any[]): string[] {
+  const keys =
+    keyBuilder instanceof Function ? keyBuilder(...args) : keyBuilder;
+  return Array.isArray(keys) ? keys : [keys];
 }
 /**
  * generateComposedKey
  * generate the final cache key, compose of use key and namespace(option), like 'namespace:key'
  */
 export function generateComposedKey(options: {
-  key?: string | CacheKeyBuilder;
+  key?: string | CacheKeyBuilder | CacheEvictKeyBuilder;
   namespace?: string | CacheKeyBuilder;
   methodName: string;
   args: any[];
-}) {
-  let key: string;
+}): string[] {
+  let keys: string[];
   if (options.key) {
-    key = extract(options.key, options.args);
+    keys = extract(options.key, options.args);
   } else {
     const hash = createHash('md5')
       .update(serialize(options.args))
       .digest('hex');
-    key = `${options.methodName}@${hash}`;
+    keys = [`${options.methodName}@${hash}`];
   }
   const namespace =
     options.namespace && extract(options.namespace, options.args);
-  return namespace ? `${namespace}:${key}` : key;
+  return keys.map((it) => (namespace ? `${namespace[0]}:${it}` : it));
 }
 
 const pendingCacheMap = new Map<string, Promise<any>>();
