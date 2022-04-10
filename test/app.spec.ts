@@ -34,5 +34,15 @@ describe('App', () => {
       await appService.resetUserInfo(1);
       expect(await cacheManager.get('user:username-1')).toBeUndefined();
     });
+    it('multiple cache key evict', async () => {
+      for (let i = 0; i < 2; i++) {
+        const res = await appService.getUserName(i);
+        const cachedValue = await cacheManager.get(`user:username-${i}`);
+        expect(res).toBe(cachedValue);
+      }
+      await appService.resetUserInfos([0, 1]);
+      expect(await cacheManager.get('user:username-0')).toBeUndefined();
+      expect(await cacheManager.get('user:username-1')).toBeUndefined();
+    });
   });
 });

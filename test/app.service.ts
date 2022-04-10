@@ -19,7 +19,7 @@ export class AppService {
   })
   async getUserName(id: number) {
     await this.wait(100);
-    return `xyz`;
+    return `xyz$${id}`;
   }
 
   @CacheEvict({
@@ -27,6 +27,13 @@ export class AppService {
     namespace: 'user',
   })
   async resetUserInfo(id: number) {
+    return true;
+  }
+  @CacheEvict({
+    key: (ids: number[]) => ids.map((it) => `username-${it}`),
+    namespace: 'user',
+  })
+  async resetUserInfos(ids: number[]) {
     return true;
   }
 }
