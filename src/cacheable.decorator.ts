@@ -45,7 +45,7 @@ export function CacheEvict(
       value: async function (...args: any[]) {
         let value;
         try {
-          value = await originalMethod();
+          value = await originalMethod.apply(this, args);
         } catch (e) {
           throw e;
         } finally {
