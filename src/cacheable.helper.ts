@@ -84,6 +84,6 @@ export async function cacheableHandle(
   } finally {
     pendingMethodCallMap.delete(key);
   }
-  await cacheManager.set(key, value, ttl);
+  await cacheManager.set(key, value, { ttl: ttl });
   return value;
 }
