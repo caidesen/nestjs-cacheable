@@ -69,4 +69,4 @@ export class UserService {
 
 ## License
 
-Nest is [MIT licensed](LICENSE).
+[MIT licensed](LICENSE).
