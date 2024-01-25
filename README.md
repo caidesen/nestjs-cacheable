@@ -26,9 +26,11 @@ $ yarn add nestjs-cacheable
 This package based on CacheModule, you mush import CacheModule in your application.
 All cache action based on CacheModule and cache-manager, you can use any cache store, as long as them supported.
 
+[CacheModule](https://docs.nestjs.com/techniques/caching)
+
 ```typescript
 import { Module } from "@nestjs/common";
-import { CacheModule } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
 @Module({
   imports: [
     CacheableModule.register(),

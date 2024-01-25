@@ -9,7 +9,7 @@ import {
 } from './cacheable.interface';
 
 export function Cacheable(options: CacheableRegisterOptions): MethodDecorator {
-  return function (target, propertyKey, descriptor) {
+  return function (_, propertyKey, descriptor) {
     // eslint-disable-next-line @typescript-eslint/ban-types
     const originalMethod = descriptor.value as unknown as Function;
     return {

@@ -4,13 +4,21 @@ import { CacheEvictKeyBuilder, CacheKeyBuilder } from './cacheable.interface';
 import { createHash } from 'crypto';
 
 let cacheManager: Cache | undefined;
+let cacheManagerIsv5OrGreater = false;
 export function setCacheManager(m: Cache) {
   cacheManager = m;
 }
+
 export function getCacheManager() {
   return cacheManager;
 }
+
+export function setCacheManagerIsv5OrGreater(val: boolean) {
+  return (cacheManagerIsv5OrGreater = val);
+}
+
 type KeyType = string | string[] | CacheKeyBuilder | CacheEvictKeyBuilder;
+
 /**
  * try extract valid key from build function or fixed string
  */
@@ -19,6 +27,7 @@ function extract(keyBuilder: KeyType, args: any[]): string[] {
     keyBuilder instanceof Function ? keyBuilder(...args) : keyBuilder;
   return Array.isArray(keys) ? keys : [keys];
 }
+
 /**
  * generateComposedKey
  * generate the final cache key, compose of use key and namespace(option), like 'namespace:key'
@@ -44,6 +53,7 @@ export function generateComposedKey(options: {
 }
 
 const pendingCacheMap = new Map<string, Promise<any>>();
+
 async function fetchCachedValue(key: string) {
   let pendingCachePromise = pendingCacheMap.get(key);
   if (!pendingCachePromise) {
@@ -62,6 +72,7 @@ async function fetchCachedValue(key: string) {
 }
 
 const pendingMethodCallMap = new Map<string, Promise<any>>();
+
 export async function cacheableHandle(
   key: string,
   method: () => Promise<any>,
@@ -84,6 +95,11 @@ export async function cacheableHandle(
   } finally {
     pendingMethodCallMap.delete(key);
   }
-  await cacheManager.set(key, value, { ttl: ttl });
+  // v5 ttl ; v4 {ttl:ttl}
+  await cacheManager.set(
+    key,
+    value,
+    cacheManagerIsv5OrGreater ? ttl : ({ ttl: ttl } as any),
+  );
   return value;
 }

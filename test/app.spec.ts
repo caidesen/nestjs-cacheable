@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppService } from './app.service';
 import { CacheableModule } from '../src';
-import { CACHE_MANAGER, CacheModule } from '@nestjs/common';
 import { Cache } from 'cache-manager';
+import { CACHE_MANAGER, CacheModule } from '@nestjs/cache-manager';
 
 describe('App', () => {
   let appService: AppService;
@@ -16,7 +16,6 @@ describe('App', () => {
       ],
       providers: [AppService],
     }).compile();
-    await app.createNestApplication().init();
     appService = app.get<AppService>(AppService);
     cacheManager = app.get<Cache>(CACHE_MANAGER);
   });
@@ -42,6 +41,14 @@ describe('App', () => {
       }
       await appService.resetUserInfos([0, 1]);
       expect(await cacheManager.get('user:username-0')).toBeUndefined();
+      expect(await cacheManager.get('user:username-1')).toBeUndefined();
+    });
+    it('cache ttl test', async () => {
+      const res = await appService.getUserName(1);
+      expect(await cacheManager.get('user:username-1')).toBe(res);
+      await appService.wait(500);
+      expect(await cacheManager.get('user:username-1')).toBe(res);
+      await appService.wait(500);
       expect(await cacheManager.get('user:username-1')).toBeUndefined();
     });
   });

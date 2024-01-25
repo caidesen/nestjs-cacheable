@@ -1,7 +1,7 @@
-import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Cache } from 'cache-manager';
-import { Cacheable } from '../src';
-import { CacheEvict } from '../src';
+import { Cacheable, CacheEvict } from '../src';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class AppService {
@@ -16,6 +16,7 @@ export class AppService {
   @Cacheable({
     key: (id: number) => `username-${id}`,
     namespace: 'user',
+    ttl: 1000,
   })
   async getUserName(id: number) {
     await this.wait(100);
@@ -29,6 +30,7 @@ export class AppService {
   async resetUserInfo(id: number) {
     return true;
   }
+
   @CacheEvict({
     key: (ids: number[]) => ids.map((it) => `username-${it}`),
     namespace: 'user',

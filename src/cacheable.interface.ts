@@ -5,7 +5,9 @@ export interface CacheableRegisterOptions {
   namespace?: string | CacheKeyBuilder;
   ttl?: number;
 }
+
 export type CacheEvictKeyBuilder = (...args: any[]) => string | string[];
+
 export interface CacheEvictRegisterOptions {
   key?: string | CacheEvictKeyBuilder;
   namespace?: string | CacheKeyBuilder;
